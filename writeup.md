@@ -17,10 +17,10 @@ File : throne.JPG
 #### Solution attempt:
 
 1. Ran exiftool. Found nothing interesting.
-2. Ran reverse image search. Found similar looking setting in Daegu’s E-World 83 Tower post on reddit.
+2. Ran reverse image search through Google images. Found similar looking setting in Daegu’s E-World 83 Tower post on reddit.
 3. City = Daegu
 
-**Flag = PCTF{Daegu}**
+**Flag = PCTF{daegu}**
 Solved 😁.
 
 ### On The Run
@@ -42,7 +42,7 @@ File: twitterpost.JPG
 #### Solution attempt:
 
 1. Ran exiftool. Found nothing interesting.
-2. Ran reverse image search. Found similar views, but none mentioned the space name. Found one LinkedIn post thanking the space providers: Convene
+2. Ran reverse image search. Found similar views, but none mentioned the space name. Found one [LinkedIn post](https://www.linkedin.com/posts/leon-l-brittain-b25687_2023-was-quite-a-year-one-of-my-most-memorable-activity-7148485118175715328-TnhS/) thanking the space providers for the event: Convene
 
 **Flag = PCTF{convene}**
 Solved 😀.
@@ -94,8 +94,8 @@ File: sbububmarine.png
 #### Solution attempt:
 
 1. Ran reverse image search. Found same image on Twitter through Google images which had coordinates 😁.
-2. Opened coordinates in [what3words](https://what3words.com/bagels.light.vivid) and found square with aft end of desired submarine. Copied 3 words.
-3. Searched for port name and found [Wikipedia article](https://en.wikipedia.org/wiki/Polyarny,_Murmansk_Oblast). Article had image of same submarine with class name.
+2. Opened coordinates in [what3words](https://what3words.com/bagels.light.vivid) and found square with aft end of desired submarine. Copied 3 words: *bagels.light.vivid*.
+3. Searched for port name and found [Wikipedia article](https://en.wikipedia.org/wiki/Polyarny,_Murmansk_Oblast). Article had image of same submarine with class name: *kilo*.
 4. Combine both and you've got your flag.
 
 **Flag: PCTF{bagels.light.vivid.kilo}**
@@ -139,6 +139,9 @@ File: exfil.pcap
 1. Opened file in Wireshark.
 2. Followed TCP streams and found interesting file upload in stream 13.
 3. Converted hex dump to file and got a zip file. Zip file was password protected. Kept for later. :(
+4. Looked at request being made to arbitrary directories which all seemed to be hex values. Gathered all hex values in one place.
+5. Hint by the organizers suggested hamming codes.
+6. Tried decoding hamming codes for many combination (7,4), (8,4), etc. but was unable to find anything interesting.
 
 ### Really Only Echo
 
@@ -209,11 +212,11 @@ if __name__ == '__main__':
     main()
 ```
 
-2. I knew I had to run the ls command somehow first.
+2. I knew I had to run the `ls` command somehow first.
 3. We can see that the command must have echo in it. So the simplest way to achieve desired output would be `echo $(ls)`.
 4. But after replacing special characters `ls` command is blacklisted.
 5. I noticed that slashes (`/`) are not being sanitized.
-6. So I used `echo $(/bin/ls)` and it worked. I could see a file named `flag.txt`.
+6. So I used `echo $(/bin/ls)` as split command splits at spaces, so the command would be `/bin/ls` instead of `ls`. And it worked. I could see a file named `flag.txt`.
 7. So I ran `echo $(/bin/cat flag.txt)` and voilà!
 
 **Flag: pctf{echo_is_such_a_versatile_command}**
@@ -235,17 +238,19 @@ File: qr_mosaic.bmp
 
 #### Solution attempt:
 
-1. Challenge name suggest steghide tool. ran `steghide extract --stegofile qr_mosaic.bmp`.
+1. Challenge name suggest steghide tool. Ran `steghide extract --stegofile qr_mosaic.bmp`.
 2. Entering blank passphrase gave file: `patriotCTF.bmp`.
 3. Opened file in hex editor for analysis.
 
 Details found:
+(from the BMP specifications)
 
 **Size of the BMP file** = 0x04AB22 = 305954 bytes
 **Offset where the pixel array (bitmap data) can be found** = 0x36
 **Number of bits per pixel** = 0x18 = 24 bits = 3 bytes
 **Width of the bitmap in pixels** = 0x02fe = 766
 **Height of the bitmap in pixels** = 0x85 = 133
+The dimensions of the image are inline with the size, hence can't resize the image.
 
 Unable to proceed further.
 
